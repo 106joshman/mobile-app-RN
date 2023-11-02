@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "fin-app",
-    "slug": "fin-app",
+    "name": "charade-game",
+    "slug": "charade-game",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
