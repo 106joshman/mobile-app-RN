@@ -9,99 +9,8 @@ import {
   FlatList,
   Pressable,
 } from "react-native";
-
-// const CARD = [
-//   {
-//     id: 0,
-//     // title: "1",
-//     word: "ONE",
-//   },
-//   {
-//     id: 1,
-//     // title: "2",
-//     word: "TWO",
-//   },
-//   {
-//     id: 2,
-//     // title: "3",
-//     word: "THREE",
-//   },
-//   {
-//     id: 3,
-//     // title: "4",
-//     word: "FOUR",
-//   },
-//   {
-//     id: 4,
-//     // title: "5",
-//     word: "FIVE",
-//   },
-//   {
-//     id: 5,
-//     // title: "6",
-//     word: "SIX",
-//   },
-//   {
-//     id: 6,
-//     // title: "7",
-//     word: "SEVEN",
-//   },
-//   {
-//     id: 7,
-//     // title: "8",
-//     word: "EIGHT",
-//   },
-//   {
-//     id: 8,
-//     // title: "9",
-//     word: "NINE",
-//   },
-//   {
-//     id: 9,
-//     // title: "10",
-//     word: "TEN",
-//   },
-//   {
-//     id: 10,
-//     // title: "11",
-//     word: "ELEVEN",
-//   },
-//   {
-//     id: 11,
-//     // title: "12",
-//     word: "TWELVE",
-//   },
-//   {
-//     id: 12,
-//     // title: "13",
-//     word: "THIRTEEN",
-//   },
-//   {
-//     id: 13,
-//     // title: "14",
-//     word: "FOURTEEN",
-//   },
-//   {
-//     id: 14,
-//     // title: "15",
-//     word: "FIFTEEN",
-//   },
-//   {
-//     id: 15,
-//     // title: "16",
-//     word: "SIXTEEN",
-//   },
-//   {
-//     id: 16,
-//     // title: "17",
-//     word: "SEVENTEEN",
-//   },
-//   {
-//     id: 17,
-//     // title: "18",
-//     word: "EIGHTEEN",
-//   },
-// ];
+import { Audio } from "expo-av";
+// import clicks from "../../files/button_click.mp3";
 
 const generateRandomWords = (count) => {
   const words = [
@@ -136,15 +45,8 @@ const generateRandomWords = (count) => {
 };
 
 export default function Home() {
-  const {
-    wrapper,
-    container,
-    gridContainer,
-    modalBox,
-    modalWrapper,
-    modalText,
-    timerText,
-  } = styles;
+  const { wrapper, container, modalBox, modalWrapper, modalText, timerText } =
+    styles;
 
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -154,25 +56,48 @@ export default function Home() {
 
   const [seconds, setSeconds] = useState(30);
 
-  const renderItem = ({ item, index, isPressed }) => (
+  const [isPressed, setIsPressed] = useState([]);
+
+  const [sound, setSound] = useState();
+
+  const renderItem = ({ item, index }) => (
     <Pressable
       onPress={() => handleView(item)}
       style={[
         styles.button,
-        { backgroundColor: isPressed ? "grey" : "#40c9a2" },
+        { backgroundColor: isPressed.includes(item) ? "grey" : "#40C9A2" },
       ]}
     >
       <Text style={styles.text}>{index + 1}</Text>
     </Pressable>
   );
 
+  const playPause = async () => {
+    const { sound } = await Audio.Sound.createAsync(
+      require("./files/button_click.mp3")
+    );
+    setSound(sound);
+    await sound.playAsync();
+  };
+
+  useEffect(() => {
+    return sound
+      ? () => {
+          console.log("Unloading Sound");
+          sound.unloadAsync();
+        }
+      : undefined;
+  }, [sound]);
+
   const handleView = (item) => {
+    playPause();
     setSelectedItem(item);
     setModalVisible(true);
+    setIsPressed((prevSelect) => [...prevSelect, item]);
 
     setTimeout(() => {
       setModalVisible(false);
-    }, 35000);
+    }, 10000);
   };
 
   useEffect(() => {
@@ -184,7 +109,7 @@ export default function Home() {
       }, 1000);
     } else if (!modalVisible) {
       // Reset the timer if the modal is closed
-      setSeconds(30);
+      setSeconds(10);
     }
 
     return () => {
@@ -234,16 +159,11 @@ export default function Home() {
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
-    overflow: "scroll",
-    marginTop: StatusBar.currentHeight || 0,
+    // marginTop: StatusBar.currentHeight || 0,
+    backgroundColor: "#07352E",
   },
   container: {
     padding: 10,
-  },
-  gridContainer: {
-    flex: 1,
-    flexDirection: "column",
-    margin: 1,
   },
   button: {
     flex: 1,

@@ -1,23 +1,37 @@
-import { StyleSheet, View } from "react-native";
-import Welcome from "./src/screens/welcome";
+import { StatusBar, StyleSheet, View } from "react-native";
+import Instruction from "./src/screens/Instruction";
 import Home from "./src/screens/home";
-import Analytics from "./src/screens/analytics";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { NavigationContainer } from "@react-navigation/native";
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      {/* <Welcome /> */}
-      {/* <Analytics /> */}
-      <Home />
-    </View>
+    <NavigationContainer style={styles.container}>
+      <StatusBar />
+      <Stack.Navigator
+        options={{ headerShown: false }}
+        initialRouteName="Instruction"
+      >
+        <Stack.Screen
+          name="Home"
+          options={{ headerShown: false }}
+          component={Home}
+        />
+        <Stack.Screen
+          name="Instruction"
+          options={{ headerShown: false }}
+          component={Instruction}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#07352E",
-
   },
 });
 
